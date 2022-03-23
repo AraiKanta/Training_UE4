@@ -39,7 +39,7 @@ public:
 	//カスタムの Pawn Movement コンポーネント を返すようにこの関数をオーバーライドする必要があります
 	virtual UPawnMovementComponent* GetMovementComponent() const override;
 
-
+	//Pawn が受け取る入力を処理するコード(関数を宣言)
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void Turn(float AxisValue);
