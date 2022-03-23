@@ -2,6 +2,8 @@
 
 
 #include "CollidingPawn.h"
+//新規変数を格納する Colliding Pawn Movement コンポーネント を作成
+#include "CollidingPawnMovementComponent.h"
 //コリジョン形状を視覚的に表現する Static Mesh コンポーネント
 #include "UObject/ConstructorHelpers.h"
 //意図的にオン/オフに出来る Particle System コンポーネント
@@ -68,6 +70,10 @@ ACollidingPawn::ACollidingPawn()
 
 	//ポーンをデフォルト プレイヤーがコントロールするように設定します。
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+
+	//移動コンポーネントのインスタンスを作成し、ルートを更新するように指示します。
+	OurMovementComponent = CreateDefaultSubobject<UCollidingPawnMovementComponent>(TEXT("CustomMovementComponent"));
+	OurMovementComponent->UpdatedComponent = RootComponent;
 }
 
 // Called when the game starts or when spawned
@@ -85,9 +91,50 @@ void ACollidingPawn::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void ACollidingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACollidingPawn::SetupPlayerInputComponent(class UInputComponent* InInputComponent)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::SetupPlayerInputComponent(InInputComponent);
 
+	// あとは関数と入力イベントをバインドするのみです。次のコードを ACollidingPawn::SetupPlayerInputComponent に追加します。
+	InInputComponent->BindAction("ParticleToggle", IE_Pressed, this, &ACollidingPawn::ParticleToggle);
+	InInputComponent->BindAxis("MoveForward", this, &ACollidingPawn::MoveForward);
+	InInputComponent->BindAxis("MoveRight", this, &ACollidingPawn::MoveRight);
+	InInputComponent->BindAxis("Turn", this, &ACollidingPawn::Turn);
+}
+
+UPawnMovementComponent* ACollidingPawn::GetMovementComponent() const
+{
+	return OurMovementComponent;
+}
+
+void ACollidingPawn::MoveForward(float AxisValue)
+{
+	if (OurMovementComponent && (OurMovementComponent->UpdatedComponent == RootComponent))
+	{
+		OurMovementComponent->AddInputVector(GetActorForwardVector() * AxisValue);
+	}
+}
+
+void ACollidingPawn::MoveRight(float AxisValue)
+{
+	if (OurMovementComponent && (OurMovementComponent->UpdatedComponent == RootComponent))
+	{
+		OurMovementComponent->AddInputVector(GetActorRightVector() * AxisValue);
+	}
+}
+
+void ACollidingPawn::Turn(float AxisValue)
+{
+	FRotator NewRotation = GetActorRotation();
+	NewRotation.Yaw += AxisValue;
+	SetActorRotation(NewRotation);
+}
+
+void ACollidingPawn::ParticleToggle()
+{
+	if (OurParticleSystem && OurParticleSystem->Template)
+	{
+		OurParticleSystem->ToggleActive();
+	}
 }
 

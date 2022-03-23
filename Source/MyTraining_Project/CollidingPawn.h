@@ -30,5 +30,18 @@ public:
 	//コードでこのコンポーネントを使用する場合は、以下のようにクラスメンバ変数に保存しなくてはいけません
 	UPROPERTY()
 		class UParticleSystemComponent* OurParticleSystem;
+	//カスタム仕様の Pawn Movement コンポーネントを使用するために、まずコンポーネントを追跡する Pawn クラスを追加します。
+	UPROPERTY()
+		class UCollidingPawnMovementComponent* OurMovementComponent;
 
+	//Pawns には GetMovementComponent という関数があります。
+	//この関数はエンジン内のその他のクラスが、Pawn が現在使用中の Pawn Movement コンポーネントにアクセスできるようにします。
+	//カスタムの Pawn Movement コンポーネント を返すようにこの関数をオーバーライドする必要があります
+	virtual UPawnMovementComponent* GetMovementComponent() const override;
+
+
+	void MoveForward(float AxisValue);
+	void MoveRight(float AxisValue);
+	void Turn(float AxisValue);
+	void ParticleToggle();
 };
