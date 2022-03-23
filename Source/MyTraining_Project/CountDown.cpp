@@ -48,14 +48,14 @@ void ACountdown::AdvanceTimer()
     UpdateTimerDisplay();
     if (CountdownTime < 1)
     {
-        //We're done counting down, so stop running the timer.
+        //カウントダウンが完了したので、タイマーの実行を停止します。
         GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
         CountdownHasFinished();
     }
 }
 
-void ACountdown::CountdownHasFinished()
+void ACountdown::CountdownHasFinished_Implementation()
 {
-    //Change to a special readout
+    //特別な読み出しに変更します
     CountdownText->SetText(TEXT("GO!"));
 }

@@ -24,6 +24,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere)
 	int32 CountdownTime;
 	UTextRenderComponent* CountdownText;
 	void UpdateTimerDisplay();
@@ -33,6 +34,8 @@ public:
 	//時間をカウントダウンする関数と、この関数をコントロールするために必要な Timer Handle を Countdown.h のクラス定義に追加しましょう。
 	//この作業を行うついでに、カウントダウン終了時に何か特別なことを行う関数も追加しましょう。
 	void AdvanceTimer();
+	UFUNCTION(BlueprintNativeEvent)
 	void CountdownHasFinished();
+	virtual void CountdownHasFinished_Implementation();
 	FTimerHandle CountdownTimerHandle;
 };
